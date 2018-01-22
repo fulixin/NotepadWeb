@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"time"
 	"math/rand"
+	"reflect"
 )
 
 /**
@@ -46,4 +47,29 @@ func GetRandomString(l int) string {
 		result = append(result, bytes[r.Intn(len(bytes))])
 	}
 	return string(result)
+}
+
+func StructToMap(obj interface{}) map[string]interface{} {
+	t := reflect.TypeOf(obj)
+	v := reflect.ValueOf(obj)
+
+	var data = make(map[string]interface{})
+	for i := 0; i < t.NumField(); i++ {
+		data[t.Field(i).Name] = v.Field(i).Interface()
+	}
+	return data
+}
+
+func StructsToSlisp(objs []interface{}) ([]map[string]interface{}) {
+	datas := []map[string]interface{}{}
+	for _, obj := range objs {
+		t := reflect.TypeOf(obj)
+		v := reflect.ValueOf(obj)
+		var data = make(map[string]interface{})
+		for i := 0; i < t.NumField(); i++ {
+			data[t.Field(i).Name] = v.Field(i).Interface()
+		}
+		datas = append(datas, data)
+	}
+	return datas
 }
